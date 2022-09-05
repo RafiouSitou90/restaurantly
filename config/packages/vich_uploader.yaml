@@ -24,3 +24,13 @@ vich_uploader:
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'slug' }
+
+        event_image:
+            uri_prefix: '%app.path.events_images%'
+            upload_destination: '%kernel.project_dir%/public%app.path.events_images%'
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'slug' }

@@ -7,6 +7,7 @@ parameters:
     app.timezone: '%env(trim:string:APP_TIMEZONE)%'
     app.path.dishes_images: /uploads/images/dishes
     app.path.specialities_images: /uploads/images/specialities
+    app.path.events_images: /uploads/images/events
 
 services:
     # default configuration for services in *this* file
