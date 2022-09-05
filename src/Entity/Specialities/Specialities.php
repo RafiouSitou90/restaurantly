@@ -7,6 +7,8 @@ namespace App\Entity\Specialities;
 use App\Entity\AbstractBaseEntity;
 use App\Repository\Specialities\SpecialitiesRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -42,6 +44,15 @@ class Specialities extends AbstractBaseEntity
 
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
+
+    /** @var Collection<int, SpecialitiesImages> */
+    #[ORM\OneToMany(mappedBy: 'speciality', targetEntity: SpecialitiesImages::class, orphanRemoval: true)]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getName(): ?string
     {
@@ -127,6 +138,31 @@ class Specialities extends AbstractBaseEntity
     public function setImageSize(?int $imageSize = null): self
     {
         $this->imageSize = $imageSize;
+
+        return $this;
+    }
+
+    /** @return Collection<int, SpecialitiesImages> */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(SpecialitiesImages $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setSpeciality($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(SpecialitiesImages $image): self
+    {
+        if ($this->images->removeElement($image) && $image->getSpeciality() === $this) {
+            $image->setSpeciality(null);
+        }
 
         return $this;
     }
