@@ -2,28 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Entity\Dishes;
+namespace App\Entity\Specialities;
 
 use App\Entity\AbstractBaseEntity;
-use App\Entity\Categories\Categories;
-use App\Repository\Dishes\DishesRepository;
+use App\Repository\Specialities\SpecialitiesRepository;
 use DateTime;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[Vich\Uploadable]
-#[ORM\Table(name: 'tab_dishes')]
-#[ORM\Entity(repositoryClass: DishesRepository::class)]
-#[ORM\Index(columns: ['name', 'slug', 'summary'], name: 'dish_search_idx',
+#[ORM\Table(name: 'tab_specialities')]
+#[ORM\Entity(repositoryClass: SpecialitiesRepository::class)]
+#[ORM\Index(columns: ['name', 'slug', 'summary'], name: 'speciality_search_idx',
     options: [
         "where" => "((name IS NOT NULL) AND (slug IS NOT NULL) AND (summary IS NOT NULL))",
     ],
 )]
-class Dishes extends AbstractBaseEntity
+class Specialities extends AbstractBaseEntity
 {
     #[ORM\Column(length: 200)]
     private ?string $name = null;
@@ -37,14 +34,7 @@ class Dishes extends AbstractBaseEntity
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $content = null;
 
-    #[ORM\Column(precision: 12, scale: 2)]
-    private ?float $price = null;
-
-    #[ORM\ManyToOne(inversedBy: 'dishes')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Categories $category = null;
-
-    #[Vich\UploadableField(mapping: 'dish_image', fileNameProperty: 'imageName', size: 'imageSize')]
+    #[Vich\UploadableField(mapping: 'speciality_image', fileNameProperty: 'imageName', size: 'imageSize')]
     private ?File $imageFile = null;
 
     #[ORM\Column(length: 255)]
@@ -52,15 +42,6 @@ class Dishes extends AbstractBaseEntity
 
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
-
-    /** @var Collection<int, DishesImages>  */
-    #[ORM\OneToMany(mappedBy: 'dish', targetEntity: DishesImages::class, orphanRemoval: true)]
-    private Collection $images;
-
-    public function __construct()
-    {
-        $this->images = new ArrayCollection();
-    }
 
     public function getName(): ?string
     {
@@ -110,30 +91,6 @@ class Dishes extends AbstractBaseEntity
         return $this;
     }
 
-    public function getPrice(): ?float
-    {
-        return $this->price;
-    }
-
-    public function setPrice(float $price): self
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Categories
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Categories $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     public function getImageFile(): ?File
     {
         return $this->imageFile;
@@ -170,31 +127,6 @@ class Dishes extends AbstractBaseEntity
     public function setImageSize(?int $imageSize = null): self
     {
         $this->imageSize = $imageSize;
-
-        return $this;
-    }
-
-    /** @return Collection<int, DishesImages> */
-    public function getImages(): Collection
-    {
-        return $this->images;
-    }
-
-    public function addImage(DishesImages $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setDish($this);
-        }
-
-        return $this;
-    }
-
-    public function removeImage(DishesImages $image): self
-    {
-        if ($this->images->removeElement($image) && $image->getDish() === $this) {
-            $image->setDish(null);
-        }
 
         return $this;
     }
