@@ -8,6 +8,8 @@ use App\Entity\AbstractBaseEntity;
 use App\Entity\Categories\Categories;
 use App\Repository\Dishes\DishesRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -50,6 +52,15 @@ class Dishes extends AbstractBaseEntity
 
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
+
+    /** @var Collection<int, DishesImages>  */
+    #[ORM\OneToMany(mappedBy: 'dish', targetEntity: DishesImages::class, orphanRemoval: true)]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getName(): ?string
     {
@@ -159,6 +170,36 @@ class Dishes extends AbstractBaseEntity
     public function setImageSize(?int $imageSize = null): self
     {
         $this->imageSize = $imageSize;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DishesImages>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(DishesImages $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setDish($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(DishesImages $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getDish() === $this) {
+                $image->setDish(null);
+            }
+        }
 
         return $this;
     }
