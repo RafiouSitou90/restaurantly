@@ -8,6 +8,8 @@ use App\Entity\AbstractBaseEntity;
 use App\Enums\EventEnum;
 use App\Repository\Events\EventsRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
@@ -49,6 +51,15 @@ class Events extends AbstractBaseEntity
 
     #[ORM\Column(nullable: true)]
     private ?int $imageSize = null;
+
+    /** @var Collection<int, EventsImages> */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: EventsImages::class, orphanRemoval: true)]
+    private Collection $images;
+
+    public function __construct()
+    {
+        $this->images = new ArrayCollection();
+    }
 
     public function getName(): ?string
     {
@@ -158,6 +169,31 @@ class Events extends AbstractBaseEntity
     public function setImageSize(?int $imageSize = null): self
     {
         $this->imageSize = $imageSize;
+
+        return $this;
+    }
+
+    /** @return Collection<int, EventsImages> */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(EventsImages $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(EventsImages $image): self
+    {
+        if ($this->images->removeElement($image) && $image->getEvent() === $this) {
+            $image->setEvent(null);
+        }
 
         return $this;
     }
