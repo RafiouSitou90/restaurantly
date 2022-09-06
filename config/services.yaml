@@ -8,6 +8,7 @@ parameters:
     app.path.dishes_images: /uploads/images/dishes
     app.path.specialities_images: /uploads/images/specialities
     app.path.events_images: /uploads/images/events
+    app.path.chefs_images: /uploads/images/chefs
 
 services:
     # default configuration for services in *this* file
@@ -27,7 +28,5 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    Symfony\Component\Uid\Command\GenerateUlidCommand: ~
     Symfony\Component\Uid\Command\GenerateUuidCommand: ~
-    Symfony\Component\Uid\Command\InspectUlidCommand: ~
     Symfony\Component\Uid\Command\InspectUuidCommand: ~
