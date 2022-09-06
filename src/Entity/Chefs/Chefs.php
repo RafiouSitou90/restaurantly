@@ -7,6 +7,8 @@ namespace App\Entity\Chefs;
 use App\Entity\AbstractBaseEntity;
 use App\Repository\Chefs\ChefsRepository;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -41,6 +43,15 @@ class Chefs extends AbstractBaseEntity
 
     #[ORM\Column(length: 255)]
     private ?string $phoneNumber = null;
+
+    /** @var Collection<int, ChefsSocials> */
+    #[ORM\OneToMany(mappedBy: 'chef', targetEntity: ChefsSocials::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $socials;
+
+    public function __construct()
+    {
+        $this->socials = new ArrayCollection();
+    }
 
     public function getTitle(): ?string
     {
@@ -131,6 +142,31 @@ class Chefs extends AbstractBaseEntity
     public function setPhoneNumber(string $phoneNumber): self
     {
         $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
+    /** @return Collection<int, ChefsSocials> */
+    public function getSocials(): Collection
+    {
+        return $this->socials;
+    }
+
+    public function addSocial(ChefsSocials $social): self
+    {
+        if (!$this->socials->contains($social)) {
+            $this->socials->add($social);
+            $social->setChef($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSocial(ChefsSocials $social): self
+    {
+        if ($this->socials->removeElement($social) && $social->getChef() === $this) {
+            $social->setChef(null);
+        }
 
         return $this;
     }
