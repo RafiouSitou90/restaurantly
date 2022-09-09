@@ -1,0 +1,44 @@
+vich_uploader:
+    db_driver: orm
+
+    metadata:
+        type: attribute
+
+    mappings:
+        dish_image:
+            uri_prefix: '%app.path.dishes_images%'
+            upload_destination: '%kernel.project_dir%/public%app.path.dishes_images%'
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'slug' }
+
+        speciality_image:
+            uri_prefix: '%app.path.specialities_images%'
+            upload_destination: '%kernel.project_dir%/public%app.path.specialities_images%'
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'slug' }
+
+        event_image:
+            uri_prefix: '%app.path.events_images%'
+            upload_destination: '%kernel.project_dir%/public%app.path.events_images%'
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'slug' }
+
+        chef_image:
+            uri_prefix: '%app.path.chefs_images%'
+            upload_destination: '%kernel.project_dir%/public%app.path.chefs_images%'
+            inject_on_load: false
+            delete_on_update: true
+            delete_on_remove: true
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
